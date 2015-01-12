@@ -3,10 +3,13 @@
 from project import db
 from datetime import datetime
 
+from _base import SessionMixin
+
 __author__ = 'bonfy'
 __all__ = ('Scrap')
 
-class Scrap(db.Model):
+
+class Scrap(db.Model, SessionMixin):
     __tablename__ = 'Scrap'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -60,3 +63,11 @@ class Scrap(db.Model):
     pdtUrl = db.Column(db.String(500))
     # 求购 出售、其他
     pdtSale = db.Column(db.String(50))
+
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'keyWord': self.keyWord,
+            'title': self.title
+        }
