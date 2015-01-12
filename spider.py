@@ -5,5 +5,5 @@ __author__ = 'bonfy'
 
 from spider import *
 
-sp = Spider(3, page=3)
+sp = Spider(2, page=3)
 sp.run()
