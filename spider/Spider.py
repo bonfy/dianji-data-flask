@@ -93,10 +93,11 @@ class Spider(object):
                     else:
                         'date is too old'
 
-            try:
-                db.session.commit()
-            except Exception as e:
-                print 'insert Table error,Error is',e
+                try:
+                    db.session.commit()
+                except Exception as e:
+                    db.session.rollback()
+                    print 'insert Table error,Error is',e
 
     def spider_fengniao(self):
         website = 'http://bbs.fengniao.com'
@@ -156,10 +157,11 @@ class Spider(object):
                             print 'error in title:', scrap.title
                     else:
                         'date is too old'
-            try:
-                db.session.commit()
-            except Exception as e:
-                print 'insert Table error,Error is',e
+                try:
+                    db.session.commit()
+                except Exception as e:
+                    db.session.rollback()
+                    print 'insert Table error,Error is',e
 
 
     def spider_imp3(self):
@@ -172,21 +174,25 @@ class Spider(object):
             for trMine in trGroups:
                 scrap = Scrap()
 
-                scrap.title = trMine.find('a',class_="s xst").get_text()
-                scrap.detailUrl = trMine.find('a',class_="s xst").get('href')
+                try:
+                    scrap.title = trMine.find('a',class_="s xst").get_text()
+                    scrap.detailUrl = trMine.find('a',class_="s xst").get('href')
 
-                emList = trMine.find_all('em')
-                scrap.keyWord = emList[0].get_text()[1:-1]
-                scrap.sale = emList[1].get_text()[1:-1]
-                scrap.postDate = emList[2].get_text()
-                scrap.viewCount = int(emList[3].get_text().strip())
-                scrap.lastReplyDate = emList[4].get_text()
-                scrap.replyCount = int(trMine.find('a',class_="xi2").get_text().strip())
+                    emList = trMine.find_all('em')
+                    scrap.keyWord = emList[0].get_text()[1:-1]
+                    scrap.sale = emList[1].get_text()[1:-1]
+                    scrap.postDate = emList[2].get_text()
+                    scrap.viewCount = int(emList[3].get_text().strip())
+                    scrap.lastReplyDate = emList[4].get_text()
+                    scrap.replyCount = int(trMine.find('a',class_="xi2").get_text().strip())
 
-                userList = trMine.find_all('cite')
-                scrap.author = userList[0].find('a').get_text()
-                scrap.lastReplyName = userList[0].find('a').get_text()
-                scrap.website_id = self.website_id
+                    userList = trMine.find_all('cite')
+                    scrap.author = userList[0].find('a').get_text()
+                    scrap.lastReplyName = userList[0].find('a').get_text()
+                    scrap.website_id = self.website_id
+                except Exception as e:
+                    print 'error with:', url
+                    print e
 
                 print scrap.detailUrl
                 print scrap.postDate
@@ -236,7 +242,8 @@ class Spider(object):
                             print 'error in title:', scrap.title
                     else:
                         'date is too old'
-            try:
-                db.session.commit()
-            except Exception as e:
-                print 'insert Table error,Error is', e
+                try:
+                    db.session.commit()
+                except Exception as e:
+                    db.session.rollback()
+                    print 'insert Table error,Error is', e
